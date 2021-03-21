@@ -1,11 +1,15 @@
 import {Product} from "../../service/product-service";
 import ImageService from "../../service/image-service";
+import {useContext} from "react";
+import {CartContext} from "../../context/cart-context";
 
 interface IProductCardProps {
     product: Product
 }
 
 const ProductCard = ({product}: IProductCardProps) => {
+    const [cart, setCart] = useContext(CartContext)
+
     const notInStock = product.quantity <= 0
     const image = ImageService.getImage(product.productId)
 
@@ -19,6 +23,10 @@ const ProductCard = ({product}: IProductCardProps) => {
             <div className={"flex item-center justify-between mt-3"}>
                 <h1 className={"text-gray-700 font-bold text-xl"}>{product.price}€</h1>
                 <button
+                    onClick={(_) => setCart({
+                        ...cart,
+                        products: [...cart.products, product]
+                    })}
                     className="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded disabled:opacity-50"
                     disabled={notInStock}>
                     Add to Card
