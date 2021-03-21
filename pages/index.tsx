@@ -1,5 +1,7 @@
+import ProductList from "../components/product/product-list";
+
 const Landing = () => {
-    return <div>Hello, NextJS!</div>
+    return <ProductList/>
 }
 
 export default Landing

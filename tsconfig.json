@@ -24,6 +24,7 @@
     "**/*.tsx"
   ],
   "exclude": [
+    "public",
     "node_modules"
   ]
 }
