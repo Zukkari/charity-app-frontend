@@ -5,12 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "codegen": "npx @openapitools/openapi-generator-cli generate -i spec.json -g typescript -o schema/"
   },
   "dependencies": {
     "next": "10.0.9",
     "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "react-dom": "17.0.1",
+    "charity-client": "./schema"
   },
   "devDependencies": {
     "@types/node": "^14.14.35",
