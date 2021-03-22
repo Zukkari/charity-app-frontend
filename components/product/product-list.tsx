@@ -19,16 +19,9 @@ const ProductList = () => {
                 const parsed = JSON.parse(event.data)
                 const domainEvent = JSON.parse(parsed[1].data)
 
-                const eventKind = domainEvent.eventKind;
-                if (eventKind === "BOOKED") {
-                    console.log("Item has been booked: " + domainEvent.productId)
-                    doUpdate(domainEvent.productId, (n) => n - 1)
-                } else if (eventKind == "RELEASED") {
-                    console.log("Item has been released: " + domainEvent.productId)
-                    doUpdate(domainEvent.productId, (n) => n + 1)
-                }
+                doUpdate(domainEvent.productId, domainEvent.newQuantity)
 
-                function doUpdate(id: number, fn: (n: number) => number): void {
+                function doUpdate(id: number, newCount: number): void {
                     const copy = products.slice()
 
                     const match = copy.find(product => product.productId == id)
@@ -39,7 +32,7 @@ const ProductList = () => {
                     const index = copy.indexOf(match)
                     copy[index] = {
                         ...match,
-                        quantity: fn(match.quantity!)
+                        quantity: newCount
                     }
 
                     setProducts(copy)
