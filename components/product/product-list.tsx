@@ -13,35 +13,35 @@ const ProductList = () => {
     }, [])
 
     useEffect(() => {
-            const url = EventService.getURL();
-            const sse = new EventSource(url)
-            sse.onmessage = event => {
-                const parsed = JSON.parse(event.data)
-                const domainEvent = JSON.parse(parsed[1].data)
+        const url = EventService.getURL();
+        const sse = new EventSource(url)
+        sse.onmessage = event => {
+            const parsed = JSON.parse(event.data)
+            const domainEvent = JSON.parse(parsed[1].data)
 
-                doUpdate(domainEvent.productId, domainEvent.newQuantity)
+            console.log(domainEvent)
+            doUpdate(domainEvent.productId, domainEvent.newQuantity)
 
-                function doUpdate(id: number, newCount: number): void {
-                    const copy = products.slice()
+            function doUpdate(id: number, newCount: number): void {
+                const copy = products.slice()
 
-                    const match = copy.find(product => product.productId == id)
-                    if (!match) {
-                        return
-                    }
-
-                    const index = copy.indexOf(match)
-                    copy[index] = {
-                        ...match,
-                        quantity: newCount
-                    }
-
-                    setProducts(copy)
+                const match = copy.find(product => product.productId == id)
+                if (!match) {
+                    return
                 }
-            }
 
-            return () => sse.close()
+                const index = copy.indexOf(match)
+                copy[index] = {
+                    ...match,
+                    quantity: newCount
+                }
+
+                setProducts(copy)
+            }
         }
-    )
+
+        return () => sse.close()
+    }, [products])
 
     return <div className={"flex flex-col h-full overflow-y-auto bg-gray-100 m-auto"}>
         <div className={"grid grid-cols-1 lg:grid-cols-3 l w-full justify-self-start m-auto"}>
