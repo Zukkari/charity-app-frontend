@@ -9,6 +9,7 @@
     "codegen": "npx @openapitools/openapi-generator-cli generate -i spec.json -g typescript -o schema/"
   },
   "dependencies": {
+    "@tailwindui/react": "^0.1.1",
     "next": "10.0.9",
     "react": "17.0.1",
     "react-dom": "17.0.1",
