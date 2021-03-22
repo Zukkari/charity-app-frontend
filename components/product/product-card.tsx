@@ -21,18 +21,15 @@ const emptyError: IError = {header: "", message: "", show: false}
 const ProductCard = ({product}: IProductCardProps) => {
     const [cart, setCart] = useContext(CartContext)
 
-    const [quantity, setQuantity] = useState(product.quantity)
-
     const [error, setError] = useState<IError>(emptyError)
 
-    const notInStock = quantity ? quantity <= 0 : true
+    const notInStock = product.quantity ? product.quantity <= 0 : true
     const image = ImageService.getImage(product.productId ? product.productId : -1)
 
     const handler: MouseEventHandler<HTMLElement> = (_) => {
         CartService.bookItem(cart.id!, product.productId!)
             .then(c => {
                 setCart(c)
-                setQuantity(quantity! - 1)
             })
             .catch(err => {
                 console.log("Error during booking an item", err)
@@ -67,7 +64,7 @@ const ProductCard = ({product}: IProductCardProps) => {
         </div>
         <div className={"w-2/3 p-4"}>
             <h1 className={"text-gray-900 text-bold text-2xl"}>{product.name}</h1>
-            <p className={"mt-2 text-gray-600 text-sm"}>Products in stock: {quantity}</p>
+            <p className={"mt-2 text-gray-600 text-sm"}>Products in stock: {product.quantity}</p>
             <div className={"flex item-center justify-between mt-3"}>
                 <h1 className={"text-gray-700 font-bold text-xl"}>{product.price}€</h1>
                 <button

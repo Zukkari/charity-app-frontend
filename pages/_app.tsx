@@ -15,8 +15,10 @@ function App({Component, pageProps}: AppProps) {
     const [isLoaded, setLoaded] = useState(false)
 
     const [cart, setCart] = useState<Cart>({})
+    const [retry, setRetry] = useState(false)
 
     useEffect(() => {
+        setRetry(false)
         CartService.createNewCart()
             .then(c => {
                 setCart(c)
@@ -24,11 +26,19 @@ function App({Component, pageProps}: AppProps) {
             .then(_ => {
                 // Actually so we can see the pretty animation
                 setTimeout(() => {
+                        setRetry(false)
                         setLoaded(true)
                     }
                     , 2000)
             })
-    }, [isLoaded])
+            .catch(e => {
+                console.log("Error when creating cart", e)
+
+                setTimeout(() => {
+                    setRetry(true)
+                }, 10000)
+            })
+    }, [isLoaded, retry])
 
     if (!isLoaded) {
         return <LoadingComponent text={"Please wait while we load the content for you"}/>
