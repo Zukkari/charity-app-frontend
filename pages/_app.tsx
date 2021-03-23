@@ -18,10 +18,34 @@ function App({Component, pageProps}: AppProps) {
     const [retry, setRetry] = useState(false)
 
     useEffect(() => {
+        const cartKey = "cartId";
+
+        const fromStorage = localStorage.getItem(cartKey)
+        if (fromStorage) {
+            console.log("Found cart id from local storage: " + fromStorage)
+            CartService.getCart(Number.parseInt(fromStorage))
+                .then(c => {
+                    setCart(c)
+                })
+                .catch(ex => {
+                    // Cart has been deleted, timed out
+                    setRetry(true)
+                    localStorage.removeItem(cartKey)
+                })
+                .then(_ => {
+                    setTimeout(() => {
+                        setLoaded(true)
+                        setRetry(false)
+                    }, 500)
+                })
+            return
+        }
+
         setRetry(false)
         CartService.createNewCart()
             .then(c => {
                 setCart(c)
+                localStorage.setItem(cartKey,  c.id!.toString())
             })
             .then(_ => {
                 // Actually so we can see the pretty animation
@@ -44,7 +68,7 @@ function App({Component, pageProps}: AppProps) {
         return <LoadingComponent text={"Please wait while we load the content for you"}/>
     }
 
-    return <div className={"flex flex-col h-screen justify-between"}>
+    return <div className={"flex flex-col h-screen justify-between bg-gray-100"}>
         <Header/>
 
         <CartContext.Provider value={[cart, setCart]}>

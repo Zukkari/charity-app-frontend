@@ -12,6 +12,20 @@ const CartService = {
         return await api.bookItem(cartId, {
             productId: productId
         })
+    },
+
+    getCart: async function (cartId: number): Promise<Cart> {
+        return await api.getCart(cartId)
+    },
+
+    deleteCart: async function (cartId: number): Promise<void> {
+        return await api.deleteCart(cartId)
+    },
+
+    payOrder: async function (cartId: number, payment: number): Promise<Cart> {
+        return await api.checkout(cartId, {
+            amount: payment
+        })
     }
 }
 
