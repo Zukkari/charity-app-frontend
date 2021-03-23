@@ -1,13 +1,15 @@
 import ImageService from "../../service/image-service";
 import React, {MouseEventHandler, useContext, useState} from "react";
 import {CartContext} from "../../context/cart-context";
-import {Product} from "../../schema";
 import CartService from "../../service/cart-service";
 import ErrorAlert from "../error-alert";
 import {Transition} from "@tailwindui/react";
 
 interface IProductCardProps {
-    product: Product
+    productId: number,
+    name: string,
+    quantity: number,
+    price: number
 }
 
 interface IError {
@@ -18,16 +20,16 @@ interface IError {
 
 const emptyError: IError = {header: "", message: "", show: false}
 
-const ProductCard = ({product}: IProductCardProps) => {
+const ProductCard = ({productId, name, quantity, price}: IProductCardProps) => {
     const [cart, setCart] = useContext(CartContext)
 
     const [error, setError] = useState<IError>(emptyError)
 
-    const notInStock = product.quantity ? product.quantity <= 0 : true
-    const image = ImageService.getImage(product.productId ? product.productId : -1)
+    const notInStock = quantity <= 0;
+    const image = ImageService.getImage(productId)
 
     const handler: MouseEventHandler<HTMLElement> = (_) => {
-        CartService.bookItem(cart.id!, product.productId!)
+        CartService.bookItem(cart.id!, productId)
             .then(c => {
                 setCart(c)
             })
@@ -63,10 +65,10 @@ const ProductCard = ({product}: IProductCardProps) => {
                  className={"h-full" + (notInStock ? " opacity-30" : "")} onClick={(e) => handler(e)}/>
         </div>
         <div className={"w-2/3 p-4"}>
-            <h1 className={"text-gray-900 text-bold text-2xl"}>{product.name}</h1>
-            <p className={"mt-2 text-gray-600 text-sm"}>Products in stock: {product.quantity}</p>
+            <h1 className={"text-gray-900 text-bold text-2xl"}>{name}</h1>
+            <p className={"mt-2 text-gray-600 text-sm"}>Products in stock: {quantity}</p>
             <div className={"flex item-center justify-between mt-3"}>
-                <h1 className={"text-gray-700 font-bold text-xl"}>{product.price}€</h1>
+                <h1 className={"text-gray-700 font-bold text-xl"}>{price}€</h1>
                 <button
                     onClick={(e) => handler(e)}
                     className="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded disabled:opacity-50"

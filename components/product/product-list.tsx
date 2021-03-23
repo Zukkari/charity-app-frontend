@@ -19,7 +19,6 @@ const ProductList = () => {
             const parsed = JSON.parse(event.data)
             const domainEvent = JSON.parse(parsed[1].data)
 
-            console.log(domainEvent)
             doUpdate(domainEvent.productId, domainEvent.newQuantity)
 
             function doUpdate(id: number, newCount: number): void {
@@ -41,11 +40,13 @@ const ProductList = () => {
         }
 
         return () => sse.close()
-    }, [products])
+    }, [])
 
     return <div className={"flex flex-col h-full overflow-y-auto bg-gray-100 m-auto"}>
         <div className={"grid grid-cols-1 lg:grid-cols-3 l w-full justify-self-start m-auto"}>
-            {products.map(product => <ProductCard key={product.productId} product={product}/>)}
+            {products.map(product => <ProductCard key={product.productId} name={product.name!}
+                                                  productId={product.productId!} quantity={product.quantity!}
+                                                  price={product.price!}/>)}
         </div>
     </div>
 
