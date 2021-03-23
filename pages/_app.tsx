@@ -38,7 +38,7 @@ function App({Component, pageProps}: AppProps) {
                     setRetry(true)
                 }, 10000)
             })
-    }, [isLoaded, retry])
+    }, [retry])
 
     if (!isLoaded) {
         return <LoadingComponent text={"Please wait while we load the content for you"}/>

@@ -1,9 +1,10 @@
 import ImageService from "../../service/image-service";
-import React, {MouseEventHandler, useContext, useState} from "react";
+import React, {MouseEventHandler, useContext, useEffect, useState} from "react";
 import {CartContext} from "../../context/cart-context";
 import CartService from "../../service/cart-service";
 import ErrorAlert from "../error-alert";
 import {Transition} from "@tailwindui/react";
+import EventService, {DomainEvent} from "../../service/event-service";
 
 interface IProductCardProps {
     productId: number,
@@ -27,6 +28,20 @@ const ProductCard = ({productId, name, quantity, price}: IProductCardProps) => {
 
     const notInStock = quantity <= 0;
     const image = ImageService.getImage(productId)
+
+    const [quantityState, setQuantityState] = useState(quantity)
+
+    useEffect(() => {
+        const sub = EventService.subscribe({
+            onEvent(event: DomainEvent): void {
+                if (event.productId === productId) {
+                    setQuantityState(event.newQuantity)
+                }
+            }
+        })
+
+        return () => sub.unsubscribe();
+    }, [])
 
     const handler: MouseEventHandler<HTMLElement> = (_) => {
         CartService.bookItem(cart.id!, productId)
@@ -66,7 +81,7 @@ const ProductCard = ({productId, name, quantity, price}: IProductCardProps) => {
         </div>
         <div className={"w-2/3 p-4"}>
             <h1 className={"text-gray-900 text-bold text-2xl"}>{name}</h1>
-            <p className={"mt-2 text-gray-600 text-sm"}>Products in stock: {quantity}</p>
+            <p className={"mt-2 text-gray-600 text-sm"}>Products in stock: {quantityState}</p>
             <div className={"flex item-center justify-between mt-3"}>
                 <h1 className={"text-gray-700 font-bold text-xl"}>{price}€</h1>
                 <button
