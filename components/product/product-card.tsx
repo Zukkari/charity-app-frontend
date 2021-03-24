@@ -1,16 +1,18 @@
-import ImageService from "../../service/image-service";
+import {Image} from "../../service/image-service";
 import React, {MouseEventHandler, useContext, useEffect, useState} from "react";
 import {CartContext} from "../../context/cart-context";
 import CartService from "../../service/cart-service";
 import ErrorAlert from "../error-alert";
 import {Transition} from "@tailwindui/react";
 import EventService, {DomainEvent} from "../../service/event-service";
+import ProductCardImage from "./product-card-image";
 
 interface IProductCardProps {
     productId: number,
     name: string,
     quantity: number,
-    price: number
+    price: number,
+    image: Image
 }
 
 interface IError {
@@ -21,15 +23,12 @@ interface IError {
 
 const emptyError: IError = {header: "", message: "", show: false}
 
-const ProductCard = ({productId, name, quantity, price}: IProductCardProps) => {
+const ProductCard = ({productId, name, quantity, price, image}: IProductCardProps) => {
     const [cart, setCart] = useContext(CartContext)
 
     const [isEnabled, setEnabled] = useState(true)
 
     const [error, setError] = useState<IError>(emptyError)
-
-    const notInStock = quantity <= 0;
-    const image = ImageService.getImage(productId)
 
     const [quantityState, setQuantityState] = useState(quantity)
 
@@ -45,7 +44,7 @@ const ProductCard = ({productId, name, quantity, price}: IProductCardProps) => {
         return () => sub.unsubscribe();
     }, [])
 
-    const handler: MouseEventHandler<HTMLElement> = (_) => {
+    const itemBookingHandler: MouseEventHandler<HTMLElement> = (_) => {
         setEnabled(false)
         CartService.bookItem(cart.id!, productId)
             .then(c => {
@@ -85,20 +84,18 @@ const ProductCard = ({productId, name, quantity, price}: IProductCardProps) => {
             </div>
         </Transition>
 
-        <div className={"w-1/3 bg-cover"}>
-            <img src={image.path} alt={"This is an image of a product"}
-                 className={"m-auto" + (notInStock ? " opacity-30" : "")} onClick={(e) => handler(e)}/>
-        </div>
+        <ProductCardImage quantity={quantityState} image={image} handler={itemBookingHandler}/>
+
         <div className={"w-2/3 p-4"}>
             <h1 className={"text-gray-900 text-bold text-2xl"}>{name}</h1>
             <p className={"mt-2 text-gray-600 text-sm"}>Products in stock: {quantityState}</p>
             <div className={"flex item-center justify-between mt-3"}>
                 <h1 className={"text-gray-700 font-bold text-xl"}>{price}€</h1>
                 <button
-                    onClick={(e) => handler(e)}
+                    onClick={(e) => itemBookingHandler(e)}
                     className="px-3 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded disabled:opacity-50"
-                    disabled={notInStock || !isEnabled || cartIsPaid}>
-                    Add to Card
+                    disabled={quantityState <= 0 || !isEnabled || cartIsPaid}>
+                    Add to cart
                 </button>
             </div>
             <div className={"text-xs mt-2"}>

@@ -19,6 +19,8 @@ Client is required to be as dependency because we still need some libraries
 
 After the dependencies have been installed, add that line back.
 
+Also do not forget to run `codegen` goal to generate the client from API spec.
+
 ## Functionality
 
 App supports following functionality:

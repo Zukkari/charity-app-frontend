@@ -20,7 +20,7 @@ function App({Component, pageProps}: AppProps) {
     useEffect(() => {
         const cartKey = "cartId";
 
-        const fromStorage = localStorage.getItem(cartKey)
+        const fromStorage = sessionStorage.getItem(cartKey)
         if (fromStorage) {
             console.log("Found cart id from local storage: " + fromStorage)
             CartService.getCart(Number.parseInt(fromStorage))
@@ -30,7 +30,7 @@ function App({Component, pageProps}: AppProps) {
                 .catch(ex => {
                     // Cart has been deleted, timed out
                     setRetry(true)
-                    localStorage.removeItem(cartKey)
+                    sessionStorage.removeItem(cartKey)
                 })
                 .then(_ => {
                     setTimeout(() => {
@@ -45,7 +45,7 @@ function App({Component, pageProps}: AppProps) {
         CartService.createNewCart()
             .then(c => {
                 setCart(c)
-                localStorage.setItem(cartKey,  c.id!.toString())
+                sessionStorage.setItem(cartKey,  c.id!.toString())
             })
             .then(_ => {
                 // Actually so we can see the pretty animation

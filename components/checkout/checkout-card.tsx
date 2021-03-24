@@ -38,7 +38,7 @@ const CheckoutCard = () => {
             })
             .then(c => {
                 setCart(c)
-                localStorage.setItem("cartId", c.id!.toString())
+                sessionStorage.setItem("cartId", c.id!.toString())
             })
     }
 
